@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)">
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" th:href="@{/starter-template.css}" rel="stylesheet">
+    <link href="starter-template.css" th:href="@{/css/starter-template.css}" rel="stylesheet">
 
     <title th:text="${title}">Hello, Spring Boot!</title>
 </head>
@@ -36,6 +36,17 @@
                 <a class="nav-link" href="#" th:href="@{/board/list}">게시판 <span class="sr-only" th:if="${menu} == 'board'">(current)</span></a></a>
             </li>
         </ul>
+
+        <a class="btn btn-light mx-2" th:href="@{/account/login}"
+           sec:authorize="!isAuthenticated()">로그인</a>
+        <a class="btn btn-light mx-2" th:href="@{/account/register}"
+           sec:authorize="!isAuthenticated()">회원가입</a>
+
+        <form class="mt-3 mt-lg-0 d-flex align-items-center" sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+            <span class="text-white" sec:authentication="name">사용자</span>
+            <span class="text-white mx-2" sec:authentication="principal.authorities">권한</span>
+            <button class="btn btn-light mx-2">로그아웃</button>
+        </form>
     </div>
 </nav>
 
