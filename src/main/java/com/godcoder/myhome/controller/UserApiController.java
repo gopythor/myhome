@@ -5,6 +5,7 @@ import com.godcoder.myhome.model.User;
 import com.godcoder.myhome.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -22,7 +24,18 @@ public class UserApiController {
 
     @GetMapping("/users")
     List<User> all() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        log.debug("get.Boards().size() 호출 전");
+        log.debug("get.Boards().size() : {}" , users.get(0).getBoards().size());
+        log.debug("get.Boards().size() 호출 후");
+        return users;
+    }
+
+    // Single item
+
+    @GetMapping("/users/{id}")
+    User one(@PathVariable Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     @PutMapping("/users/{id}")
