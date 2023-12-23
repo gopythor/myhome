@@ -1,8 +1,10 @@
 package com.godcoder.myhome.controller;
 
 import com.godcoder.myhome.model.Board;
+import com.godcoder.myhome.model.QUser;
 import com.godcoder.myhome.model.User;
 import com.godcoder.myhome.repository.UserRepository;
+import com.querydsl.core.types.Predicate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -23,14 +26,25 @@ public class UserApiController {
     private final UserRepository userRepository;
 
     @GetMapping("/users")
-    List<User> all() {
-        List<User> users = userRepository.findAll();
-        log.debug("get.Boards().size() 호출 전");
-        log.debug("get.Boards().size() : {}" , users.get(0).getBoards().size());
-        log.debug("get.Boards().size() 호출 후");
+    Iterable<User> all(@RequestParam(required = false) String method, @RequestParam(required = false, defaultValue = "") String text) {
+        Iterable<User> users = null;
+        if ("query".equals(method)) {
+            users = userRepository.findByUsernameQuery(text);
+        } else if ("nativeQuery".equals(method)) {
+            users = userRepository.findByUsernameNativeQuery(text);
+        } else if ("querydsl".equals(method)) {
+            QUser user = QUser.user;
+            Predicate predicate = user.username.contains(text);
+            users = userRepository.findAll(predicate);
+        } else if ("querydslCustom".equals(method)) {
+            users = userRepository.findByUsernameCustom(text);
+        } else if ("jdbc".equals(method)) {
+            users = userRepository.findByUsernameJdbc(text);
+        } else {
+            users = userRepository.findAll();
+        }
         return users;
     }
-
     // Single item
 
     @GetMapping("/users/{id}")

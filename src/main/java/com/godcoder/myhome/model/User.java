@@ -39,7 +39,7 @@ public class User {
 
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    @JsonIgnore
+    @JsonIgnore
     private List<Board> boards = new ArrayList<>();
 
 
