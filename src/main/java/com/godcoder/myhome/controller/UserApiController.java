@@ -1,5 +1,6 @@
 package com.godcoder.myhome.controller;
 
+import com.godcoder.myhome.mapper.UserMapper;
 import com.godcoder.myhome.model.Board;
 import com.godcoder.myhome.model.QUser;
 import com.godcoder.myhome.model.User;
@@ -25,6 +26,8 @@ public class UserApiController {
 
     private final UserRepository userRepository;
 
+    private final UserMapper userMapper;
+
     @GetMapping("/users")
     Iterable<User> all(@RequestParam(required = false) String method, @RequestParam(required = false, defaultValue = "") String text) {
         Iterable<User> users = null;
@@ -40,6 +43,8 @@ public class UserApiController {
             users = userRepository.findByUsernameCustom(text);
         } else if ("jdbc".equals(method)) {
             users = userRepository.findByUsernameJdbc(text);
+        } else if ("mybatis".equals(method)) {
+            users = userMapper.getUsers(text);
         } else {
             users = userRepository.findAll();
         }
